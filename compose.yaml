@@ -1,0 +1,7 @@
+﻿services:
+  bangumiss:
+    image: bangumiss
+    build:
+      context: .
+      dockerfile: Bangumiss/Dockerfile
+
