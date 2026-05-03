@@ -4,24 +4,16 @@ namespace Bangumiss;
 
 public class BgmRss
 {
-    public required Uri BgmUri { get; set; }
+    private readonly Uri _bgmUri = new(Environment.GetEnvironmentVariable("BANGUMISS_BGM_RSS")
+                                      ??throw new Exception("RSS url not set"));
 
-    public List<string> GetRssItems()
+    public IEnumerable<SyndicationItem> GetRssItems()
     {
         List<string> result = new();
-        using (XmlReader reader = XmlReader.Create(BgmUri.ToString()))
-        {
-            SyndicationFeed feed = SyndicationFeed.Load(reader);
-            Console.WriteLine("Reading feed from " + BgmUri.ToString());
-            Console.WriteLine(feed.Title.Text);
-            foreach (var item in feed.Items)
-            {
-                result.Add("Title:"+item.Title.Text+
-                           Environment.NewLine
-                +"link:"+ item.Links[0].Uri.AbsoluteUri);
-            }
-        }
-
-        return result;
+        using XmlReader reader = XmlReader.Create(_bgmUri.ToString());
+        SyndicationFeed feed = SyndicationFeed.Load(reader);
+        Console.WriteLine("Reading feed from " + _bgmUri.ToString());
+        Console.WriteLine(feed.Title.Text);
+        return feed.Items;
     }
 }
