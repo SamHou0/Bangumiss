@@ -13,7 +13,6 @@ public class BgmRss
         using XmlReader reader = XmlReader.Create(_bgmUri.ToString());
         SyndicationFeed feed = SyndicationFeed.Load(reader);
         Console.WriteLine("Reading feed from " + _bgmUri.ToString());
-        Console.WriteLine(feed.Title.Text);
         return feed.Items;
     }
 }

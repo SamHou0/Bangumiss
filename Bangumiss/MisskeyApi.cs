@@ -31,11 +31,18 @@ public class MisskeyApi
 
     public async Task PostNote(string text,string contentWarningText = "",bool isLocalOnly = false)
     {
-        var note = new MisskeyNote()
+
+        var note = new MisskeyNote();
+        if (string.IsNullOrEmpty(contentWarningText))
         {
-            Text = text,
-            ContentWarningText = contentWarningText,
-            IsLocalOnly = isLocalOnly
+            note.Text = text;
+            note.IsLocalOnly = isLocalOnly;
+        }
+        else
+        {
+            note.Text = text;
+            note.ContentWarningText = contentWarningText;
+            note.IsLocalOnly = isLocalOnly;
         };
         StringContent content = new(JsonSerializer.Serialize(note), 
             Encoding.UTF8, "application/json");

@@ -10,6 +10,6 @@ public sealed class MisskeyApiTest
     {
         MisskeyApi misskeyApi = new();
         await misskeyApi.PostNote("Test Note","Hide Text",true);
-        
+        await misskeyApi.PostNote("Test Note",isLocalOnly:true);
     }
 }
