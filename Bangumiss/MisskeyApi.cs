@@ -12,7 +12,7 @@ public class MisskeyApi
 
     private readonly string _misskeyUrl =
         (Environment.GetEnvironmentVariable("BANGUMISS_MISSKEY_URL")
-        ?? throw new Exception("Missing BANGUMISS_MISSKEY_URL environment variable."))
+         ?? throw new Exception("Missing BANGUMISS_MISSKEY_URL environment variable."))
         + "/api";
 
     private readonly HttpClient _client = new HttpClient();
@@ -29,9 +29,8 @@ public class MisskeyApi
             "User-Agent", "SamHou0.Bangumiss.1.0.0");
     }
 
-    public async Task PostNote(string text,string contentWarningText = "",bool isLocalOnly = false)
+    public async Task PostNote(string text, string contentWarningText = "", bool isLocalOnly = false)
     {
-
         var note = new MisskeyNote();
         if (string.IsNullOrEmpty(contentWarningText))
         {
@@ -43,11 +42,11 @@ public class MisskeyApi
             note.Text = text;
             note.ContentWarningText = contentWarningText;
             note.IsLocalOnly = isLocalOnly;
-        };
-        StringContent content = new(JsonSerializer.Serialize(note), 
+        }
+        StringContent content = new(JsonSerializer.Serialize(note),
             Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync(_misskeyUrl+
-            "/notes/create",content);
+        var response = await _client.PostAsync(_misskeyUrl +
+                                               "/notes/create", content);
         response.EnsureSuccessStatusCode();
     }
 }
@@ -57,5 +56,5 @@ public class MisskeyNote
     [JsonPropertyName("text")] public string? Text { get; set; }
     [JsonPropertyName("cw")] public string? ContentWarningText { get; set; }
     [JsonPropertyName("localOnly")] public bool IsLocalOnly { get; set; }
-    
+    [JsonPropertyName("visibility")] public string Visibility { get; set; } = "home";
 }

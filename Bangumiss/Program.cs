@@ -45,12 +45,10 @@ class Program
                 var bgmCollectionData = await _bgmApi.GetUserCollectByUrl(item.Links[0].Uri);
                 pendingItems.Add(new()
                 {
-                    Comment = bgmCollectionData.Comment ??
-                              throw new ArgumentNullException(nameof(bgmCollectionData.Comment)),
+                    Comment = bgmCollectionData.Comment ?? "",
                     Link = item.Links[0].Uri,
                     Rate = bgmCollectionData.Rate,
-                    Tags = bgmCollectionData.Tags ??
-                           throw new ArgumentNullException(nameof(bgmCollectionData.Tags)),
+                    Tags = bgmCollectionData.Tags ??[],
                     Title = item.Title.Text ??
                             throw new ArgumentNullException(nameof(item.Title)),
                 });
