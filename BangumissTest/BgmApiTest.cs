@@ -1,4 +1,5 @@
 ﻿using Bangumiss;
+using Bangumiss.Bangumi;
 
 namespace BangumissTest;
 

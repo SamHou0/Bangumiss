@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Bangumiss;
+namespace Bangumiss.Bangumi;
 
 public class BgmApi
 {
@@ -46,7 +46,7 @@ public class BgmApi
             _client.GetAsync(BaseUrl+$"/v0/users/{_userName}/collections/{id}");
         response.EnsureSuccessStatusCode();
         return JsonSerializer.Deserialize<BgmCollectionData>(
-                   response.Content.ReadAsStringAsync().Result)
+                   await response.Content.ReadAsStringAsync())
                ?? throw new Exception("Empty get user collection response");
     }
 
@@ -55,7 +55,7 @@ public class BgmApi
     /// </summary>
     /// <param name="link"></param>
     /// <returns></returns>
-    private string ExtractBgmId(Uri link) =>
+    public static string ExtractBgmId(Uri link) =>
         link.AbsolutePath.Split('/')
             .Last().TrimEnd('/');
 }
@@ -65,6 +65,7 @@ public class BgmCollectionData
     [JsonPropertyName("comment")] public string? Comment { get; init; }
     [JsonPropertyName("tags")] public string[]? Tags { get; init; }
     [JsonPropertyName("rate")] public int Rate { get; init; }
+    [JsonPropertyName("type")] public int Type { get; init; }
 }
 
 public class BgmUser

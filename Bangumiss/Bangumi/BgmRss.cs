@@ -1,6 +1,7 @@
-﻿using System.Xml;
-using System.ServiceModel.Syndication;
-namespace Bangumiss;
+﻿using System.ServiceModel.Syndication;
+using System.Xml;
+
+namespace Bangumiss.Bangumi;
 
 public class BgmRss
 {
