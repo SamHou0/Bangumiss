@@ -6,6 +6,8 @@
       dockerfile: ./Bangumiss/Dockerfile
     env_file:
       - ./Bangumiss/.env
+    volumes:
+      - ./bangumiss.db:/app/bangumiss.db
     restart: unless-stopped
     logging:
       driver: "json-file"
