@@ -110,5 +110,5 @@ public class ResponseObject
 
 public class CreatedNote
 {
-    [JsonPropertyName("id")] public string Id { get; set; }
+    [JsonPropertyName("id")] public string? Id { get; set; }
 }

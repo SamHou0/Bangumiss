@@ -1,13 +1,14 @@
 ﻿services:
   bangumiss:
     container_name: bangumiss
+    user: "1000:1000" # Change to your id (run `id` to see), or db may fail to open
     build:
       context: .
       dockerfile: ./Bangumiss/Dockerfile
     env_file:
-      - ./Bangumiss/.env
+      - ./Bangumiss/.env # Don't forget to edit this file`
     volumes:
-      - ./bangumiss.db:/app/bangumiss.db
+      - ./data:/app/data # Make sure you have read & write permissions
     restart: unless-stopped
     logging:
       driver: "json-file"

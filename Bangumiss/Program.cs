@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.ServiceModel.Syndication;
 using Bangumiss.Bangumi;
 using Bangumiss.Data;
 using Bangumiss.Misskey;
+using Sentry;
 
 namespace Bangumiss;
 
@@ -20,8 +22,9 @@ class Program
                 ?? throw new Exception("Refresh seconds not set.")
             )
         ));
+        InitSentry();
         Console.WriteLine("Starting...");
-        while (await timer.WaitForNextTickAsync())
+        do
         {
             try
             {
@@ -31,15 +34,32 @@ class Program
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 Console.WriteLine(ex.Message);
+                SentrySdk.CaptureException(ex);
                 if (Debugger.IsAttached) throw;
             }
-        }
+        } while (await timer.WaitForNextTickAsync());
     }
-
+/// <summary>
+/// Refresh bangumi rss and create final ActionItem.
+/// </summary>
+/// <returns></returns>
+/// <exception cref="ArgumentNullException"></exception>
     static async Task<List<ActionItem>> RefreshBgmRssAsync()
     {
-        var items = _bgmRss.GetRssItems();
+        IEnumerable<SyndicationItem> items;
+        try
+        {
+            items = _bgmRss.GetRssItems();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Get rss failed, retry new time: " + ex.Message);
+            Console.WriteLine(ex);
+            return new List<ActionItem>();
+        }
+
         List<ActionItem> pendingItems = new();
         foreach (var item in items)
         {
@@ -66,7 +86,10 @@ class Program
 
         return pendingItems;
     }
-
+/// <summary>
+/// Process notes and post them to misskey
+/// </summary>
+/// <param name="items"></param>
     static async Task ProcessNotesAsync(List<ActionItem> items)
     {
         foreach (var item in items)
@@ -92,9 +115,41 @@ class Program
             _database.AddItemNote(new()
             {
                 ItemId = item.BgmId,
-                NoteId = createdNote.Id,
+                NoteId = createdNote.Id ?? 
+                         throw new ArgumentNullException(nameof(createdNote.Id)),
                 State = item.State
             });
         }
+    }
+
+    static void InitSentry()
+    {
+        string? dsn = Environment.GetEnvironmentVariable("SENTRY_DSN");
+        if (string.IsNullOrEmpty(dsn) || Debugger.IsAttached)
+        {
+            Console.WriteLine("Sentry not enabled! Stop init Sentry.");
+            return;
+        }
+        else
+        {
+            Console.WriteLine("Sentry enabled using " + dsn);
+        }
+
+        SentrySdk.Init(options =>
+        {
+            // A Sentry Data Source Name (DSN) is required.
+            // See https://docs.sentry.io/product/sentry-basics/dsn-explainer/
+            // You can set it in the SENTRY_DSN environment variable, or you can set it in code here.
+            options.Dsn = dsn;
+
+            // When debug is enabled, the Sentry client will emit detailed debugging information to the console.
+            // This might be helpful, or might interfere with the normal operation of your application.
+            // We enable it here for demonstration purposes when first trying Sentry.
+            // You shouldn't do this in your applications unless you're troubleshooting issues with Sentry.
+            options.Debug = false;
+
+            // This option is recommended. It enables Sentry's "Release Health" feature.
+            options.AutoSessionTracking = true;
+        });
     }
 }

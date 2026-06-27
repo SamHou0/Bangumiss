@@ -6,7 +6,7 @@ namespace Bangumiss.Database;
 public class Database
 {
     private SqliteConnection _connection = new SqliteConnection(ConnectionString);
-    const string ConnectionString = @"Data Source=bangumiss.db";
+    const string ConnectionString = @"Data Source=data/bangumiss.db";
     public Database()
     {
         _connection.Open();
