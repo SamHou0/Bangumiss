@@ -25,6 +25,17 @@ git pull https://github.com/SamHou0/Bangumiss.git
 cd Bangumiss
 ```
 
+Then let's make a data dir and get right permission:
+
+```bash
+mkdir data
+cd data
+touch bangumiss.db
+chmod 660 bangumiss.db
+chmod 770 .
+cd ..
+```
+
 Then edit `.env`
 
 Note: `.env` is in an subfolder. So cd Bangumiss again is necessary.
